@@ -1,0 +1,18 @@
+<div class="container mt-4">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="card">
+          <img [src]="currentUser.image" class="card-img-top" alt="User Image">
+          <div class="card-body">
+            <h5 class="card-title">{{ currentUser.name }}</h5>
+            <p class="card-text">{{ currentUser.role }}</p>
+            <button (click)="logout()" class="btn btn-danger">Cerrar Sesión</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <h2>Panel de Arquitecto</h2>
+        <p>Aquí puedes gestionar obras, materiales y asistencia.</p>
+      </div>
+    </div>
+  </div>
