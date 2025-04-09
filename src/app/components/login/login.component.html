@@ -1,20 +1,40 @@
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-header">
-          <h3 class="text-center">Login</h3>
-        </div>
-        <div class="card-body">
-          <form (ngSubmit)="login()">
-            <div class="mb-3">
-              <label class="form-label">Nombre de usuario</label>
-              <input type="text" class="form-control" [(ngModel)]="username" name="username" required />
+<header class="header">
+  <div class="container">    
+    <div class="banner_icons">
+      <a routerLink="/"><img src="assets/casa.png" alt="Inicio" class="banner_icon"></a>
+      <a routerLink="/"><p class="banner_text">Inicio</p></a>
+    </div>
+  </div>
+  <div class="title">
+    <h4>Sistema Gestor de Obras</h4>
+  </div>
+</header>
+
+<main class="main">
+  <section class="content">
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header text-center">
+              <h3>Login</h3>
+              <div class="datetime-container">
+                <div class="text-muted small">{{ currentDate }}</div>
+                <div class="clock h4">{{ currentTime }}</div>
+              </div>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Ingresar</button>
-          </form>
+            <div class="card-body">
+              <form (ngSubmit)="login()">
+                <div class="mb-3">
+                  <label class="form-label">Nombre de usuario</label>
+                  <input type="text" class="form-control" [(ngModel)]="username" name="username" required />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
+  </section>
+</main>

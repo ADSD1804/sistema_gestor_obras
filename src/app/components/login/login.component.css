@@ -1,0 +1,103 @@
+.header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    background-color: #008bc2;
+    color: #000000;
+    height: 120px;  
+    margin: 0;
+}
+
+.title{
+    font-size: 50px;    
+}
+
+.container{
+    display: flex;
+    align-items: center;
+}
+
+.banner_icons{
+    margin: 15px;
+    text-align: center;
+}
+
+.banner_icon{
+    width: 35px;
+    height: 35px;
+}
+
+.banner_icon:hover{
+    width: 40px;
+    height: 40px;
+    color: #ffffff;
+}
+
+.banner_text{
+    margin: 0;
+    color: #000000;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration-color: #000000;
+}
+
+/* Estilos para el contenedor principal */
+.main {
+    padding: 2rem;
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 120px);
+  }
+  
+  /* Estilos para la tarjeta */
+  .card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.479);
+    padding: 20px;
+  }
+  
+  .card-header {
+    background-color: #0064c2;
+    color: white;
+    padding: 1px;
+    text-align: center;
+  }
+  
+  /* Estilos para el formulario */
+  .form-control {
+    border-radius: 5px;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .btn-primary {
+    background-color: #0064c2;
+    color: #ffffff;
+    border: none;
+    padding: 0.75rem;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-primary:hover {
+    background-color: #004688;
+    color: #ffffff;
+  }
+
+/* Estilos para el reloj y fecha */
+.datetime-container {
+  margin: 10px 0;
+  color: white;
+}
+
+.clock {
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-top: 5px;
+  color: #ffffff;
+}
+
+.text-muted {
+  opacity: 0.8;
+}
+  

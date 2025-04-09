@@ -1,18 +1,18 @@
-<div class="container mt-4">
-  <div class="row">
-    <div class="col-md-3">
-      <div class="card">
-        <img [src]="currentUser.image" class="card-img-top" alt="User Image">
-        <div class="card-body">
-          <h5 class="card-title">{{ currentUser.name }}</h5>
-          <p class="card-text">{{ currentUser.role }}</p>
-          <button (click)="logout()" class="btn btn-danger">Cerrar Sesión</button>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-9">
-      <h2>Panel de Arquitecto</h2>
-      <p>Aquí puedes gestionar obras, materiales y asistencia.</p>
+<header class="header">
+  <div class="container">    
+    <div class="banner_icons">
+      <a routerLink="/"><img src="assets/casa.png" alt="Inicio" class="banner_icon"></a>
+      <a routerLink="/"><p class="banner_text">Inicio</p></a>
     </div>
   </div>
-</div>
+  <div class="title">
+    <h4>Sistema Gestor de Obras</h4>
+  </div>
+</header>
+
+<main class="main">
+  <div class="welcome-container">
+    <h2>Bienvenido Arquitecto: {{currentUser?.name}}</h2>
+    <img [src]="currentUser?.image" alt="Imagen de perfil" class="profile-image">
+  </div>
+</main>

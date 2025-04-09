@@ -1,1 +1,18 @@
-<p>trabajador works!</p>
+<header class="header">
+    <div class="container">    
+      <div class="banner_icons">
+        <a routerLink="/"><img src="assets/casa.png" alt="Inicio" class="banner_icon"></a>
+        <a routerLink="/"><p class="banner_text">Inicio</p></a>
+      </div>
+    </div>
+    <div class="title">
+      <h4>Sistema Gestor de Obras</h4>
+    </div>
+  </header>
+
+<main class="main">
+  <div class="welcome-container">
+    <h2>Bienvenido Trabajador: {{currentUser?.name}}</h2>
+    <img [src]="currentUser?.image" alt="Imagen de perfil" class="profile-image">
+  </div>
+</main>

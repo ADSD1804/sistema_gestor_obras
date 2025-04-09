@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-arquitecto',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './arquitecto.component.html',
   styleUrl: './arquitecto.component.css'
 })
