@@ -3,6 +3,13 @@ const fs = require('fs').promises;
 const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const mongoose = require('mongoose');
+
+// MongoDB connection
+const mongoUri = "mongodb+srv://andresdavidsoto:adsd1804@sistema-gestor-obras.ve3hami.mongodb.net/sistema_gestor_obras?retryWrites=true&w=majority";
+mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Conectado a MongoDB Atlas'))
+  .catch(err => console.error('Error al conectar a MongoDB', err));
 
 const app = express();
 const PORT = 3001;
@@ -16,6 +23,37 @@ app.use(cors({
 }));
 
 app.use(bodyParser.json());
+
+// Worker schema and model
+const workerSchema = new mongoose.Schema({
+  name: String,
+  role: String,
+  zone: String,
+  email: String,
+  createdAt: { type: Date, default: Date.now }
+});
+const Worker = mongoose.model('Worker', workerSchema);
+
+// IngresoDiario schema and model for "ingreso_diario" collection
+const ingresoDiarioSchema = new mongoose.Schema({
+  name: String,
+  role: String,
+  zone: String,
+  email: String,
+  createdAt: { type: Date, default: Date.now }
+}, { collection: 'ingreso_diario' });
+const IngresoDiario = mongoose.model('IngresoDiario', ingresoDiarioSchema);
+
+// POST endpoint to save ingreso diario
+app.post('/gestion_obras/registro_diario', async (req, res) => {
+  try {
+    const ingreso = new IngresoDiario(req.body);
+    await ingreso.save();
+    res.status(201).json(ingreso);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Ruta de prueba
 app.get('/', (req, res) => {

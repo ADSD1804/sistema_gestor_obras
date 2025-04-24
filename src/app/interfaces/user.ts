@@ -4,4 +4,5 @@ export interface User {
     email: string;
     role: 'arquitecto' | 'supervisor' | 'trabajador';
     image: string;
+    zone?: string;
   }
