@@ -45,3 +45,9 @@
 .main {
     margin-top: 20px;
 }
+
+.select-scroll {
+    max-height: 150px;
+    overflow-y: auto;
+    display: block;
+}

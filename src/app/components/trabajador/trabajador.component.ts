@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-trabajador',
@@ -11,13 +12,31 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './trabajador.component.html',
   styleUrl: './trabajador.component.css'
 })
-export class TrabajadorComponent {
+export class TrabajadorComponent implements OnInit {
   currentUser: any;
   workerName = '';
   workerRole = 'trabajador';
+  assignedTasks: any[] = [];
 
   constructor(private authService: AuthService) {
     this.currentUser = this.authService.getCurrentUser();
+  }
+
+  ngOnInit() {
+    this.loadAssignedTasks();
+  }
+
+  loadAssignedTasks() {
+    if (this.currentUser && this.currentUser.name) {
+      this.authService.getAssignedTasks(this.currentUser.name).subscribe({
+        next: (tasks) => {
+          this.assignedTasks = tasks;
+        },
+        error: (err) => {
+          console.error('Error loading assigned tasks:', err);
+        }
+      });
+    }
   }
 
   onNameChange() {

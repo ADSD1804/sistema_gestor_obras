@@ -47,6 +47,39 @@ export class AuthService {
     );
   }
 
+  getWorkers(): Observable<User[]> {
+    return this.http.get<any>(this.apiUrl).pipe(
+      map(response => {
+        if (!response.results) return [];
+        return response.results
+          .map((character: any) => {
+            let role: 'arquitecto' | 'supervisor' | 'trabajador';
+            if (character.id % 3 === 0) role = 'arquitecto';
+            else if (character.id % 3 === 1) role = 'supervisor';
+            else role = 'trabajador';
+
+            return {
+              id: character.id,
+              name: character.name,
+              email: `${character.name.replace(/\s+/g, '').toLowerCase()}@construccion.com`,
+              role,
+              image: character.image,
+              zone: character.origin?.name || 'Desconocida'
+            } as User;
+          })
+          .filter((user: User) => user.role === 'trabajador');
+      })
+    );
+  }
+
+  assignTask(taskData: { workerName: string; email: string; task: string; assignedBy: string; nombre_supervisor?: string }): Observable<any> {
+    return this.http.post(`${this.backendUrl}/gestion_obras/tareas_asignadas`, taskData);
+  }
+
+  getAssignedTasks(workerName: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.backendUrl}/gestion_obras/tareas_asignadas/${workerName}`);
+  }
+
   registerWorker(workerData: { name: string; role: string; zone: string; email: string }): Observable<any> {
     return this.http.post(`${this.backendUrl}/gestion_obras/registro_diario`, workerData);
   }

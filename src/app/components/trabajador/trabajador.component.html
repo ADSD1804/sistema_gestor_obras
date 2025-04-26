@@ -16,4 +16,28 @@
     <img [src]="currentUser?.image" alt="Imagen de perfil" class="profile-image">
   </div>
 
+  <section class="assigned-tasks">
+    <h3>Tareas Asignadas</h3>
+    <table *ngIf="assignedTasks.length > 0; else noTasks">
+      <thead>
+        <tr>
+          <th>Tarea</th>
+          <th>Asignada Por</th>
+          <th>Nombre Supervisor</th>
+          <th>Fecha Asignación</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let task of assignedTasks">
+          <td>{{task.task}}</td>
+          <td>{{task.assignedBy}}</td>
+          <td>{{task.nombre_supervisor}}</td>
+          <td>{{task.assignedAt | date:'short'}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noTasks>
+      <p>No hay tareas asignadas.</p>
+    </ng-template>
+  </section>
 </main>

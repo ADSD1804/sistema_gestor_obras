@@ -1,18 +1,37 @@
 <header class="header">
-    <div class="container">    
-      <div class="banner_icons">
-        <a routerLink="/"><img src="assets/casa.png" alt="Inicio" class="banner_icon"></a>
-        <a routerLink="/"><p class="banner_text">Inicio</p></a>
-      </div>
+  <div class="container">    
+    <div class="banner_icons">
+      <a routerLink="/"><img src="assets/casa.png" alt="Inicio" class="banner_icon"></a>
+      <a routerLink="/"><p class="banner_text">Inicio</p></a>
     </div>
-    <div class="title">
-      <h4>Sistema Gestor de Obras</h4>
-    </div>
-  </header>
+  </div>
+  <div class="title">
+    <h4>Sistema Gestor de Obras</h4>
+  </div>
+</header>
 
 <main class="main">
   <div class="welcome-container">
     <h2>Bienvenido Supervisor: {{currentUser?.name}}</h2>
     <img [src]="currentUser?.image" alt="Imagen de perfil" class="profile-image">
   </div>
+
+  <section class="task-assignment">
+    <h3>Asignar Tarea a Trabajador</h3>
+    <form (ngSubmit)="assignTask()">
+      <label for="workerSelect">Nombre Trabajador:</label>
+      <select id="workerSelect" [(ngModel)]="selectedWorker" name="selectedWorker" (change)="onWorkerChange()" required>
+        <option [ngValue]="null" disabled selected>Seleccione un trabajador</option>
+        <option *ngFor="let worker of workers" [ngValue]="worker">{{worker.name}}</option>
+      </select>
+
+      <label for="email">Correo:</label>
+      <input id="email" type="email" [(ngModel)]="email" name="email" readonly />
+
+      <label for="task">Tarea a asignar:</label>
+      <textarea id="task" [(ngModel)]="task" name="task" rows="4" required></textarea>
+
+      <button type="submit">Asignar Tarea</button>
+    </form>
+  </section>
 </main>

@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
-// MongoDB connection
+
 const mongoUri = "mongodb+srv://andresdavidsoto:adsd1804@sistema-gestor-obras.ve3hami.mongodb.net/sistema_gestor_obras?retryWrites=true&w=majority";
 mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Conectado a MongoDB Atlas'))
@@ -15,16 +15,15 @@ const app = express();
 const PORT = 3001;
 const LOGS_FILE = path.join(__dirname, 'logs.json');
 
-// Configuración CORS más estricta
 app.use(cors({
-  origin: 'http://localhost:4200', // Reemplaza con tu puerto de Angular
+  origin: 'http://localhost:4200', 
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
 
 app.use(bodyParser.json());
 
-// Worker schema and model
+
 const workerSchema = new mongoose.Schema({
   name: String,
   role: String,
@@ -34,7 +33,7 @@ const workerSchema = new mongoose.Schema({
 });
 const Worker = mongoose.model('Worker', workerSchema);
 
-// IngresoDiario schema and model for "ingreso_diario" collection
+
 const ingresoDiarioSchema = new mongoose.Schema({
   name: String,
   role: String,
@@ -44,10 +43,26 @@ const ingresoDiarioSchema = new mongoose.Schema({
 }, { collection: 'ingreso_diario' });
 const IngresoDiario = mongoose.model('IngresoDiario', ingresoDiarioSchema);
 
-// POST endpoint to save ingreso diario
+const counterSchema = new mongoose.Schema({
+  _id: Number,
+  seq: { type: Number, default: 0 }
+});
+const Counter = mongoose.model('Counter', counterSchema);
+
+async function getNextSequence(name) {
+  const ret = await Counter.findByIdAndUpdate(
+    name,
+    { $inc: { seq: 1 } },
+    { new: true, upsert: true }
+  );
+  return ret.seq;
+}
+
 app.post('/gestion_obras/registro_diario', async (req, res) => {
   try {
-    const ingreso = new IngresoDiario(req.body);
+    const nextId = await getNextSequence('ingreso_diario_id');
+    const ingresoData = { ...req.body, id: nextId };
+    const ingreso = new IngresoDiario(ingresoData);
     await ingreso.save();
     res.status(201).json(ingreso);
   } catch (error) {
@@ -55,12 +70,12 @@ app.post('/gestion_obras/registro_diario', async (req, res) => {
   }
 });
 
-// Ruta de prueba
+
 app.get('/', (req, res) => {
   res.send('Backend funcionando correctamente');
 });
 
-// Inicializar archivo JSON si no existe
+
 async function initializeLogsFile() {
   try {
     await fs.access(LOGS_FILE);
@@ -69,7 +84,7 @@ async function initializeLogsFile() {
   }
 }
 
-// Endpoint para guardar logs
+
 app.post('/api/logs', async (req, res) => {
   try {
     const { usuario, rol } = req.body;
@@ -90,7 +105,7 @@ app.post('/api/logs', async (req, res) => {
   }
 });
 
-// Endpoint para obtener logs
+
 app.get('/api/logs', async (req, res) => {
   try {
     const logsData = await fs.readFile(LOGS_FILE, 'utf8');
@@ -101,7 +116,48 @@ app.get('/api/logs', async (req, res) => {
   }
 });
 
-// Iniciar servidor
+const tareasAsignadasSchema = new mongoose.Schema({
+  workerName: String,
+  email: String,
+  task: String,
+  assignedBy: String,
+  assignedAt: { type: Date, default: Date.now }
+}, { collection: 'tareas_asignadas' });
+
+const TareaAsignada = mongoose.model('TareaAsignada', tareasAsignadasSchema);
+
+// Update POST endpoint to save nombre_supervisor
+app.post('/gestion_obras/tareas_asignadas', async (req, res) => {
+  try {
+    const { workerName, email, task, assignedBy, nombre_supervisor } = req.body;
+    const tareaData = {
+      workerName,
+      email,
+      task,
+      assignedBy,
+      nombre_supervisor: nombre_supervisor || assignedBy,
+      assignedAt: new Date()
+    };
+    const tarea = new TareaAsignada(tareaData);
+    await tarea.save();
+    res.status(201).json(tarea);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET endpoint to fetch tasks assigned to a worker
+app.get('/gestion_obras/tareas_asignadas/:workerName', async (req, res) => {
+  try {
+    const workerName = req.params.workerName;
+    const tareas = await TareaAsignada.find({ workerName });
+    res.json(tareas);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 initializeLogsFile().then(() => {
   app.listen(PORT, () => {
     console.log(`Servidor backend corriendo en http://localhost:${PORT}`);
