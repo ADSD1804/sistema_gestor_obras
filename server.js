@@ -44,7 +44,7 @@ const ingresoDiarioSchema = new mongoose.Schema({
 const IngresoDiario = mongoose.model('IngresoDiario', ingresoDiarioSchema);
 
 const counterSchema = new mongoose.Schema({
-  _id: Number,
+  _id: String,
   seq: { type: Number, default: 0 }
 });
 const Counter = mongoose.model('Counter', counterSchema);
