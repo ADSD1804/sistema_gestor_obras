@@ -24,16 +24,6 @@ app.use(cors({
 app.use(bodyParser.json());
 
 
-const workerSchema = new mongoose.Schema({
-  name: String,
-  role: String,
-  zone: String,
-  email: String,
-  createdAt: { type: Date, default: Date.now }
-});
-const Worker = mongoose.model('Worker', workerSchema);
-
-
 const ingresoDiarioSchema = new mongoose.Schema({
   name: String,
   role: String,
@@ -42,12 +32,6 @@ const ingresoDiarioSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 }, { collection: 'ingreso_diario' });
 const IngresoDiario = mongoose.model('IngresoDiario', ingresoDiarioSchema);
-
-const counterSchema = new mongoose.Schema({
-  _id: String,
-  seq: { type: Number, default: 0 }
-});
-const Counter = mongoose.model('Counter', counterSchema);
 
 async function getNextSequence(name) {
   const ret = await Counter.findByIdAndUpdate(
