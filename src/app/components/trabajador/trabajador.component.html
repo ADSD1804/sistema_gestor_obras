@@ -25,6 +25,7 @@
           <th>Asignada Por</th>
           <th>Nombre Supervisor</th>
           <th>Fecha Asignación</th>
+          <th>Estado</th>
         </tr>
       </thead>
       <tbody>
@@ -33,6 +34,9 @@
           <td>{{task.assignedBy}}</td>
           <td>{{task.nombre_supervisor}}</td>
           <td>{{task.assignedAt | date:'short'}}</td>
+          <td>
+            <button (click)="finalizeTask(task)">Finalizar</button>
+          </td>
         </tr>
       </tbody>
     </table>

@@ -33,6 +33,12 @@ const ingresoDiarioSchema = new mongoose.Schema({
 }, { collection: 'ingreso_diario' });
 const IngresoDiario = mongoose.model('IngresoDiario', ingresoDiarioSchema);
 
+const counterSchema = new mongoose.Schema({
+  _id: String,
+  seq: { type: Number, default: 0 }
+}, { collection: 'counters' });
+const Counter = mongoose.model('Counter', counterSchema);
+
 async function getNextSequence(name) {
   const ret = await Counter.findByIdAndUpdate(
     name,
@@ -105,12 +111,13 @@ const tareasAsignadasSchema = new mongoose.Schema({
   email: String,
   task: String,
   assignedBy: String,
-  assignedAt: { type: Date, default: Date.now }
+  assignedAt: { type: Date, default: Date.now },
+  estado: { type: String, default: 'en curso' }
 }, { collection: 'tareas_asignadas' });
 
 const TareaAsignada = mongoose.model('TareaAsignada', tareasAsignadasSchema);
 
-// Update POST endpoint to save nombre_supervisor
+// Update POST endpoint to save nombre_supervisor and estado
 app.post('/gestion_obras/tareas_asignadas', async (req, res) => {
   try {
     const { workerName, email, task, assignedBy, nombre_supervisor } = req.body;
@@ -120,11 +127,34 @@ app.post('/gestion_obras/tareas_asignadas', async (req, res) => {
       task,
       assignedBy,
       nombre_supervisor: nombre_supervisor || assignedBy,
-      assignedAt: new Date()
+      assignedAt: new Date(),
+      estado: 'en curso'
     };
     const tarea = new TareaAsignada(tareaData);
     await tarea.save();
     res.status(201).json(tarea);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// PATCH endpoint to update estado of a task
+app.patch('/gestion_obras/tareas_asignadas/:id/estado', async (req, res) => {
+  try {
+    const taskId = req.params.id;
+    const { estado } = req.body;
+    if (!estado) {
+      return res.status(400).json({ error: 'Estado is required' });
+    }
+    const updatedTask = await TareaAsignada.findByIdAndUpdate(
+      taskId,
+      { estado },
+      { new: true }
+    );
+    if (!updatedTask) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+    res.json(updatedTask);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

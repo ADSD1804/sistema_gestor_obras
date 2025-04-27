@@ -47,6 +47,10 @@ export class AuthService {
     );
   }
 
+  updateTaskEstado(taskId: string, estado: string): Observable<any> {
+    return this.http.patch(`${this.backendUrl}/gestion_obras/tareas_asignadas/${taskId}/estado`, { estado });
+  }
+
   getWorkers(): Observable<User[]> {
     return this.http.get<any>(this.apiUrl).pipe(
       map(response => {

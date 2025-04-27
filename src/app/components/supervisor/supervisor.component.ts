@@ -18,6 +18,7 @@ export class SupervisorComponent implements OnInit {
   selectedWorker: User | null = null;
   task: string = '';
   email: string = '';
+  finalizedTasks: any[] = [];
 
   constructor(private authService: AuthService) {
     this.currentUser = this.authService.getCurrentUser();
@@ -31,11 +32,33 @@ export class SupervisorComponent implements OnInit {
     this.authService.getWorkers().subscribe({
       next: (workers) => {
         this.workers = workers;
+        this.loadFinalizedTasks();
       },
       error: (err) => {
         console.error('Error loading workers:', err);
       }
     });
+  }
+
+  loadFinalizedTasks() {
+    this.finalizedTasks = [];
+    const tasksObservables = this.workers.map(worker =>
+      this.authService.getAssignedTasks(worker.name)
+    );
+
+    // Fetch tasks for all workers and filter by estado "finalizada"
+    Promise.all(tasksObservables.map(obs => obs.toPromise()))
+      .then(results => {
+        results.forEach(tasks => {
+          if (tasks) {
+            const finalized = tasks.filter((task: any) => task.estado === 'finalizada');
+            this.finalizedTasks.push(...finalized);
+          }
+        });
+      })
+      .catch(err => {
+        console.error('Error loading finalized tasks:', err);
+      });
   }
 
   onWorkerChange() {
