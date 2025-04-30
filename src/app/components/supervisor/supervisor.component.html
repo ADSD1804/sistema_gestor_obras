@@ -35,8 +35,8 @@
     </form>
   </section>
 
-  <section class="finalized-tasks" *ngIf="finalizedTasks.length > 0">
-    <h3>Tareas Finalizadas</h3>
+  <section class="all-tasks" *ngIf="allTasks.length > 0">
+    <h3>Tareas en Curso y Finalizadas</h3>
     <table>
       <thead>
         <tr>
@@ -48,7 +48,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let task of finalizedTasks">
+        <tr *ngFor="let task of allTasks">
           <td>{{task.task}}</td>
           <td>{{task.assignedBy}}</td>
           <td>{{task.nombre_supervisor}}</td>
