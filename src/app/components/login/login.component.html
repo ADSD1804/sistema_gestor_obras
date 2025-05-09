@@ -17,16 +17,16 @@
         <div class="col-md-6">
           <div class="card">
             <div class="card-header text-center">
-              <h3>Login</h3>
-              <div class="datetime-container">
-                <div class="text-muted small">{{ currentDate }}</div>
-                <div class="clock h4">{{ currentTime }}</div>
-              </div>
+              <h2>Login</h2>
+            </div>
+            <div class="datetime-container">
+              <div class="text-muted small">{{ currentDate }}</div>
+              <div class="clock">{{ currentTime }}</div>
             </div>
             <div class="card-body">
               <form (ngSubmit)="login()">
                 <div class="mb-3">
-                  <label class="form-label">Nombre de usuario</label>
+                  <label class="form-label">Nombre de usuario</label> <br>
                   <input type="text" class="form-control" [(ngModel)]="username" name="username" required />
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Ingresar</button>

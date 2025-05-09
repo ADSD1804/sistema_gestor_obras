@@ -3,7 +3,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
-    background-color: #008bc2;
+    background-color: #004ec2;
     color: #000000;
     height: 120px;  
     margin: 0;
@@ -15,6 +15,7 @@
 
 .container{
     display: flex;
+    justify-content: center;
     align-items: center;
 }
 
@@ -24,13 +25,13 @@
 }
 
 .banner_icon{
-    width: 35px;
-    height: 35px;
+    width: 50px;
+    height: 50px;
 }
 
 .banner_icon:hover{
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
     color: #ffffff;
 }
 
@@ -39,27 +40,29 @@
     color: #000000;
     font-size: 18px;
     font-weight: bold;
-    text-decoration-color: #000000;
+    text-decoration: none;
 }
 
-/* Estilos para el contenedor principal */
 .main {
-    padding: 2rem;
-    background-color: #f8f9fa;
+    padding: 0;
+    margin: 0;
+    background-color: #b8e0f3;
     min-height: calc(100vh - 120px);
   }
   
-  /* Estilos para la tarjeta */
   .card {
     border: none;
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.479);
-    padding: 20px;
+    padding: 20px;  
+    margin-top: 120px;
+    background-color: #004050;
+    width: 350px;
   }
   
   .card-header {
-    background-color: #0064c2;
-    color: white;
+    background-color: #008cff31;
+    color: rgb(255, 255, 255);
     padding: 1px;
     text-align: center;
   }
@@ -69,10 +72,16 @@
     border-radius: 5px;
     padding: 0.75rem;
     margin-bottom: 1rem;
+    background-color: #1d00c25b;
   }
   
+  .form-label {
+    font-weight: bold;
+    color: #ffffff;
+  }
+
   .btn-primary {
-    background-color: #0064c2;
+    background-color: #1d00c25b;
     color: #ffffff;
     border: none;
     padding: 0.75rem;
@@ -81,13 +90,14 @@
   
   .btn-primary:hover {
     background-color: #004688;
-    color: #ffffff;
+    color: #000000;
   }
 
 /* Estilos para el reloj y fecha */
 .datetime-container {
   margin: 10px 0;
-  color: white;
+  color: rgb(255, 255, 255);
+  text-align: center;
 }
 
 .clock {
@@ -100,4 +110,4 @@
 .text-muted {
   opacity: 0.8;
 }
-  
+ 

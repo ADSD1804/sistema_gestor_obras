@@ -4,8 +4,8 @@ import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-arquitecto',
   imports: [RouterLink],
-  templateUrl: './arquitecto.component.html',
-  styleUrl: './arquitecto.component.css'
+  templateUrl: './administrador.component.html',
+  styleUrl: './administrador.component.css'
 })
 export class ArquitectoComponent {
 logout() {
