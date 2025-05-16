@@ -58,4 +58,26 @@
       </tbody>
     </table>
   </section>
+
+  <section class="ingreso-diario-workers" *ngIf="workers.length > 0">
+    <h3>Trabajadores en Ingreso Diario</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Correo</th>
+          <th>Zona</th>
+          <th>Rol</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let worker of workers">
+          <td>{{worker.name}}</td>
+          <td>{{worker.email}}</td>
+          <td>{{worker.zone}}</td>
+          <td>{{worker.role}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 </main>

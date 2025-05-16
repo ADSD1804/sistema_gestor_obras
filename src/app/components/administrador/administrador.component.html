@@ -1,18 +1,57 @@
-<header class="header">
-  <div class="container">    
-    <div class="banner_icons">
-      <a routerLink="/"><img src="assets/casa.png" alt="Inicio" class="banner_icon"></a>
-      <a routerLink="/"><p class="banner_text">Inicio</p></a>
-    </div>
-  </div>
-  <div class="title">
-    <h4>Sistema Gestor de Obras</h4>
-  </div>
-</header>
+<div class="administrador-container">
+  <h1>Administrador - Gestión de Permisos</h1>
 
-<main class="main">
-  <div class="welcome-container">
-    <h2>Bienvenido Arquitecto: {{currentUser?.name}}</h2>
-    <img [src]="currentUser?.image" alt="Imagen de perfil" class="profile-image">
-  </div>
-</main>
+  <section>
+    <h2>Supervisores</h2>
+    <ul>
+      <li *ngFor="let supervisor of supervisors">
+        <span>{{ supervisor.name }}</span>
+        <label>
+          <input type="checkbox" 
+                 [checked]="hasPermission(supervisor, 'read')" 
+                 (change)="togglePermission(supervisor, 'read')" />
+          Read
+        </label>
+        <label>
+          <input type="checkbox" 
+                 [checked]="hasPermission(supervisor, 'write')" 
+                 (change)="togglePermission(supervisor, 'write')" />
+          Write
+        </label>
+        <label>
+          <input type="checkbox" 
+                 [checked]="hasPermission(supervisor, 'delete')" 
+                 (change)="togglePermission(supervisor, 'delete')" />
+          Delete
+        </label>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Trabajadores</h2>
+    <ul>
+      <li *ngFor="let worker of workers">
+        <span>{{ worker.name }}</span>
+        <label>
+          <input type="checkbox" 
+                 [checked]="hasPermission(worker, 'read')" 
+                 (change)="togglePermission(worker, 'read')" />
+          Read
+        </label>
+        <label>
+          <input type="checkbox" 
+                 [checked]="hasPermission(worker, 'write')" 
+                 (change)="togglePermission(worker, 'write')" />
+          Write
+        </label>
+        <label>
+          <input type="checkbox" 
+                 [checked]="hasPermission(worker, 'delete')" 
+                 (change)="togglePermission(worker, 'delete')" />
+          Delete
+        </label>
+      </li>
+    </ul>
+  </section>
+</div>

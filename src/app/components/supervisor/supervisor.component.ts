@@ -25,7 +25,18 @@ export class SupervisorComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadWorkers();
+    this.loadIngresoDiarioWorkers();
+  }
+
+  loadIngresoDiarioWorkers() {
+    this.authService.getIngresoDiarioWorkers().subscribe({
+      next: (workers) => {
+        this.workers = workers;
+      },
+      error: (err) => {
+        console.error('Error loading ingreso diario workers:', err);
+      }
+    });
   }
 
   loadWorkers() {

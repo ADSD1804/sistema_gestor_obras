@@ -57,8 +57,8 @@ export class AuthService {
         if (!response.results) return [];
         return response.results
           .map((character: any) => {
-            let role: 'arquitecto' | 'supervisor' | 'trabajador';
-            if (character.id % 3 === 0) role = 'arquitecto';
+            let role: 'administrador' | 'supervisor' | 'trabajador';
+            if (character.id % 3 === 0) role = 'administrador';
             else if (character.id % 3 === 1) role = 'supervisor';
             else role = 'trabajador';
 
@@ -100,5 +100,9 @@ export class AuthService {
       return user ? JSON.parse(user) : null;
     }
     return null;
+  }
+
+  getIngresoDiarioWorkers(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.backendUrl}/gestion_obras/ingreso_diario`);
   }
 }

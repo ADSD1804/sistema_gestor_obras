@@ -33,26 +33,9 @@ const ingresoDiarioSchema = new mongoose.Schema({
 }, { collection: 'ingreso_diario' });
 const IngresoDiario = mongoose.model('IngresoDiario', ingresoDiarioSchema);
 
-const counterSchema = new mongoose.Schema({
-  _id: String,
-  seq: { type: Number, default: 0 }
-}, { collection: 'counters' });
-const Counter = mongoose.model('Counter', counterSchema);
-
-async function getNextSequence(name) {
-  const ret = await Counter.findByIdAndUpdate(
-    name,
-    { $inc: { seq: 1 } },
-    { new: true, upsert: true }
-  );
-  return ret.seq;
-}
-
 app.post('/gestion_obras/registro_diario', async (req, res) => {
   try {
-    const nextId = await getNextSequence('ingreso_diario_id');
-    const ingresoData = { ...req.body, id: nextId };
-    const ingreso = new IngresoDiario(ingresoData);
+    const ingreso = new IngresoDiario(req.body);
     await ingreso.save();
     res.status(201).json(ingreso);
   } catch (error) {
@@ -114,7 +97,7 @@ const tareasAsignadasSchema = new mongoose.Schema({
   assignedAt: { type: Date, default: Date.now },
   estado: { type: String, default: 'en curso' }
 }, { collection: 'tareas_asignadas' });
-
+ 
 const TareaAsignada = mongoose.model('TareaAsignada', tareasAsignadasSchema);
 
 // Update POST endpoint to save nombre_supervisor and estado
