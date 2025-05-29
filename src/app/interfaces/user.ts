@@ -5,4 +5,5 @@ export interface User {
     role: 'arquitecto' | 'supervisor' | 'trabajador';
     image: string;
     zone?: string;
-  }
+    createdAt?: string;
+}

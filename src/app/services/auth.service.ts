@@ -13,6 +13,8 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(name: string): Observable<User | null> {
+    const now = new Date();
+    localStorage.setItem('loginTime', now.toISOString());
     return this.http.get<any>(`${this.apiUrl}?name=${name}`).pipe(
       switchMap(response => {
         if (response.results?.length > 0) {
@@ -90,8 +92,41 @@ export class AuthService {
 
   logout(){
     if (typeof window !== 'undefined' && window.localStorage) {
-      localStorage.removeItem('currentUser');
+      const currentUser = this.getCurrentUser();
+      const loginTime = this.getLoginTime();
+      const logoutTime = new Date();
+      if (currentUser && loginTime) {
+        const workedTimeMs = logoutTime.getTime() - loginTime.getTime();
+        const workedTimeMinutes = Math.floor(workedTimeMs / 60000);
+        // Create tiempo_trabajado record in backend
+        this.recordWorkedTime({
+          userId: currentUser.id,
+          loginTime: loginTime.toISOString(),
+          logoutTime: logoutTime.toISOString(),
+          workedMinutes: workedTimeMinutes
+        }).subscribe({
+          next: () => {
+            // After recording, clear localStorage
+            localStorage.removeItem('currentUser');
+            localStorage.setItem('logoutTime', logoutTime.toISOString());
+          },
+          error: (err) => {
+            console.error('Error recording worked time:', err);
+            // Still clear localStorage even if error
+            localStorage.removeItem('currentUser');
+            localStorage.setItem('logoutTime', logoutTime.toISOString());
+          }
+        });
+      } else {
+        // If no user or loginTime, just clear localStorage
+        localStorage.removeItem('currentUser');
+        localStorage.setItem('logoutTime', logoutTime.toISOString());
+      }
     }
+  }
+
+  recordWorkedTime(data: { userId: number; loginTime: string; logoutTime: string; workedMinutes: number }): Observable<any> {
+    return this.http.post(`${this.backendUrl}/tiempo_trabajado`, data);
   }
 
   getCurrentUser(){
@@ -104,5 +139,15 @@ export class AuthService {
 
   getIngresoDiarioWorkers(): Observable<any[]> {
     return this.http.get<any[]>(`${this.backendUrl}/gestion_obras/ingreso_diario`);
+  }
+
+  getLoginTime(): Date | null {
+    const loginTime = localStorage.getItem('loginTime');
+    return loginTime ? new Date(loginTime) : null;
+  }
+
+  getLogoutTime(): Date | null {
+    const logoutTime = localStorage.getItem('logoutTime');
+    return logoutTime ? new Date(logoutTime) : null;
   }
 }

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
@@ -19,8 +20,9 @@ export class SupervisorComponent implements OnInit {
   task: string = '';
   email: string = '';
   allTasks: any[] = [];
+  workTime: any;
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private router: Router) {
     this.currentUser = this.authService.getCurrentUser();
   }
 
@@ -57,7 +59,6 @@ export class SupervisorComponent implements OnInit {
       this.authService.getAssignedTasks(worker.name)
     );
 
-    // Fetch tasks for all workers and filter by estado "en curso" or "finalizada"
     Promise.all(tasksObservables.map(obs => obs.toPromise()))
       .then(results => {
         results.forEach(tasks => {
@@ -104,5 +105,10 @@ export class SupervisorComponent implements OnInit {
         alert('Error al asignar la tarea: ' + err.message);
       }
     });
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

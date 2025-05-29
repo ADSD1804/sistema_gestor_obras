@@ -16,7 +16,7 @@ const PORT = 3001;
 const LOGS_FILE = path.join(__dirname, 'logs.json');
 
 app.use(cors({
-  origin: 'http://localhost:4200', 
+  origin: 'http://localhost:4200',
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
@@ -70,7 +70,7 @@ app.post('/api/logs', async (req, res) => {
     const logsData = await fs.readFile(LOGS_FILE, 'utf8');
     const logs = JSON.parse(logsData);
     logs.push(newLog);
-    
+
     await fs.writeFile(LOGS_FILE, JSON.stringify(logs, null, 2));
     res.status(201).json(newLog);
   } catch (error) {
@@ -97,10 +97,9 @@ const tareasAsignadasSchema = new mongoose.Schema({
   assignedAt: { type: Date, default: Date.now },
   estado: { type: String, default: 'en curso' }
 }, { collection: 'tareas_asignadas' });
- 
+
 const TareaAsignada = mongoose.model('TareaAsignada', tareasAsignadasSchema);
 
-// Update POST endpoint to save nombre_supervisor and estado
 app.post('/gestion_obras/tareas_asignadas', async (req, res) => {
   try {
     const { workerName, email, task, assignedBy, nombre_supervisor } = req.body;
@@ -121,7 +120,6 @@ app.post('/gestion_obras/tareas_asignadas', async (req, res) => {
   }
 });
 
-// PATCH endpoint to update estado of a task
 app.patch('/gestion_obras/tareas_asignadas/:id/estado', async (req, res) => {
   try {
     const taskId = req.params.id;
@@ -143,7 +141,6 @@ app.patch('/gestion_obras/tareas_asignadas/:id/estado', async (req, res) => {
   }
 });
 
-// GET endpoint to fetch tasks assigned to a worker
 app.get('/gestion_obras/tareas_asignadas/:workerName', async (req, res) => {
   try {
     const workerName = req.params.workerName;
@@ -154,6 +151,16 @@ app.get('/gestion_obras/tareas_asignadas/:workerName', async (req, res) => {
   }
 });
 
+
+app.get('/gestion_obras/ingreso_diario', async (req, res) => {
+  try {
+    // Exclude the "counters" field from the documents if it exists
+    const ingresoDiarioData = await IngresoDiario.find({}, { counters: 0 }).lean();
+    res.json(ingresoDiarioData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 initializeLogsFile().then(() => {
   app.listen(PORT, () => {

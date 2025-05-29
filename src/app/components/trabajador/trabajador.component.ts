@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-trabajador',
@@ -17,21 +17,23 @@ export class TrabajadorComponent implements OnInit {
   workerName = '';
   workerRole = 'trabajador';
   assignedTasks: any[] = [];
+  email: string = '';
+  workTime: string = '';
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private router: Router) {
     this.currentUser = this.authService.getCurrentUser();
+    this.email = this.currentUser?.email || '';
   }
 
   ngOnInit() {
     this.loadAssignedTasks();
+    this.calculateWorkTime();
   }
 
   loadAssignedTasks() {
     if (this.currentUser && this.currentUser.name) {
-      console.log('Loading tasks for worker:', this.currentUser.name);
       this.authService.getAssignedTasks(this.currentUser.name).subscribe({
         next: (tasks) => {
-          console.log('Tasks received:', tasks);
           const filteredTasks = tasks.filter((task: any) => task.estado === 'en curso');
           this.assignedTasks = [...filteredTasks];
         },
@@ -44,7 +46,7 @@ export class TrabajadorComponent implements OnInit {
 
   finalizeTask(task: any) {
     this.authService.updateTaskEstado(task._id, 'finalizada').subscribe({
-      next: (updatedTask) => {
+      next: () => {
         this.assignedTasks = this.assignedTasks.filter(t => t._id !== task._id);
       },
       error: (err) => {
@@ -83,6 +85,24 @@ export class TrabajadorComponent implements OnInit {
         },
         error: (err) => alert('Error al obtener usuario: ' + err.message)
       });
+    }
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  calculateWorkTime() {
+    const loginTime = this.authService.getLoginTime();
+    const logoutTime = this.authService.getLogoutTime();
+    if (loginTime && logoutTime) {
+      const diffMs = logoutTime.getTime() - loginTime.getTime();
+      const diffHrs = Math.floor(diffMs / 3600000);
+      const diffMins = Math.floor((diffMs % 3600000) / 60000);
+      this.workTime = `${diffHrs}h ${diffMins}m`;
+    } else {
+      this.workTime = 'No disponible';
     }
   }
 }
