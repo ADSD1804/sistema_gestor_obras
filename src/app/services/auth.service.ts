@@ -141,6 +141,11 @@ export class AuthService {
     return this.http.get<any[]>(`${this.backendUrl}/gestion_obras/ingreso_diario`);
   }
 
+  // New method to add material
+  addMaterial(materialData: { materialType: string; quantity: number }): Observable<any> {
+    return this.http.post(`${this.backendUrl}/gestion_obras/materiales`, materialData);
+  }
+
   getLoginTime(): Date | null {
     const loginTime = localStorage.getItem('loginTime');
     return loginTime ? new Date(loginTime) : null;

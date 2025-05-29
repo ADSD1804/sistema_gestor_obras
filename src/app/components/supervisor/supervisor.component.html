@@ -24,7 +24,23 @@
     Tiempo trabajado: {{ workTime }}
   </div>
   <!-- Existing content -->
+
   <div>
+    <h3>Ingreso de Materiales</h3>
+    <form (ngSubmit)="submitMaterial()" #materialForm="ngForm">
+      <div>
+        <label for="materialType">Tipo de Material:</label>
+        <input id="materialType" name="materialType" [(ngModel)]="materialType" required />
+      </div>
+      <div>
+        <label for="quantity">Cantidad:</label>
+        <input id="quantity" name="quantity" type="number" [(ngModel)]="quantity" required min="1" />
+      </div>
+      <button type="submit" [disabled]="materialForm.invalid">Guardar Material</button>
+    </form>
+  </div>
+  <div>
+    <h3>Asignar tarea</h3>
     <label for="workerSelect">Seleccionar trabajador:</label>
     <select id="workerSelect" [(ngModel)]="selectedWorker" (change)="onWorkerChange()">
       <option [ngValue]="null">--Seleccione--</option>

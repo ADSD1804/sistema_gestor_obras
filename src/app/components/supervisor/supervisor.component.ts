@@ -22,6 +22,10 @@ export class SupervisorComponent implements OnInit {
   allTasks: any[] = [];
   workTime: any;
 
+  // New properties for material input
+  materialType: string = '';
+  quantity: number | null = null;
+
   constructor(private authService: AuthService, private router: Router) {
     this.currentUser = this.authService.getCurrentUser();
   }
@@ -107,6 +111,9 @@ export class SupervisorComponent implements OnInit {
     });
   }
 
+  submitMaterial(){
+
+  }
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);

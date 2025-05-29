@@ -100,6 +100,28 @@ const tareasAsignadasSchema = new mongoose.Schema({
 
 const TareaAsignada = mongoose.model('TareaAsignada', tareasAsignadasSchema);
 
+// New Material schema and model
+const materialSchema = new mongoose.Schema({
+  materialType: { type: String, required: true },
+  quantity: { type: Number, required: true }
+}, { collection: 'materiales' });
+
+const Material = mongoose.model('Material', materialSchema);
+
+app.post('/gestion_obras/materiales', async (req, res) => {
+  try {
+    const { materialType, quantity } = req.body;
+    if (!materialType || !quantity) {
+      return res.status(400).json({ error: 'materialType and quantity are required' });
+    }
+    const material = new Material({ materialType, quantity });
+    await material.save();
+    res.status(201).json(material);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.post('/gestion_obras/tareas_asignadas', async (req, res) => {
   try {
     const { workerName, email, task, assignedBy, nombre_supervisor } = req.body;
