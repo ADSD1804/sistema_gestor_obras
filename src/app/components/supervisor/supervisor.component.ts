@@ -111,8 +111,31 @@ export class SupervisorComponent implements OnInit {
     });
   }
 
-  submitMaterial(){
+  submitMaterial() {
+     if (!this.materialType || !this.quantity || this.quantity < 1) {
+      console.error('Datos del formulario inválidos');
+      return;
+    }
 
+    const quantityNumber = Number(this.quantity);
+
+    const materialData = {
+      materialType: this.materialType,
+      quantity: quantityNumber
+    };
+
+    this.authService.addMaterial(materialData).subscribe({
+      next: (response) => {
+        console.log('Material guardado exitosamente', response);
+        this.materialType = '';
+        this.quantity = 1;
+        alert('Material registrado correctamente');
+      },
+      error: (err) => {
+        console.error('Error al guardar el material', err);
+        alert('Ocurrió un error al registrar el material');
+      }
+    });
   }
   logout() {
     this.authService.logout();
