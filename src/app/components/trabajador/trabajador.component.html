@@ -37,17 +37,26 @@
   </div>
   <div>
     <h3>Materiales Disponibles</h3>
-    <table>
-      <thead>
-        <tr>
-          <td>Material Disponible</td>
-          <td>Cantidad</td>
-        </tr>
-      </thead>
-      <tbody>
-        
-      </tbody>
-    </table>
+  <div *ngIf="materiales.length === 0">
+    <p>No hay materiales registrados</p>
+  </div>
+  
+  <table *ngIf="materiales.length > 0" class="material-table">
+    <thead>
+      <tr>
+        <th>Tipo de Material</th>
+        <th>Cantidad</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let material of materiales">
+        <td>{{ material.materialType }}</td>
+        <td>{{ material.quantity }}</td>
+      </tr>
+    </tbody>
+  </table>
+
   </div>
   <div>
     <h3>Solicitar Materiales</h3>

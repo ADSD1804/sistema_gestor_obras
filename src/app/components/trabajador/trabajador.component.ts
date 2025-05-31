@@ -5,6 +5,11 @@ import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+interface Material {
+  materialType: string;
+  quantity: number;
+}
+
 @Component({
   selector: 'app-trabajador',
   standalone: true,
@@ -19,6 +24,7 @@ export class TrabajadorComponent implements OnInit {
   assignedTasks: any[] = [];
   email: string = '';
   workTime: string = '';
+  materiales: Material[] = [];
 
   constructor(private authService: AuthService, private router: Router) {
     this.currentUser = this.authService.getCurrentUser();
@@ -28,6 +34,18 @@ export class TrabajadorComponent implements OnInit {
   ngOnInit() {
     this.loadAssignedTasks();
     this.calculateWorkTime();
+  }
+
+  cargarMateriales() {
+    this.authService.getMateriales().subscribe({
+      next: (data: Material[]) => {
+        this.materiales = data;
+      },
+      error: (err) => {
+        console.error('Error al cargar materiales', err);
+        alert('Error al cargar la lista de materiales');
+      }
+    });
   }
 
   loadAssignedTasks() {

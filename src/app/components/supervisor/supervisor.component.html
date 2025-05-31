@@ -1,8 +1,10 @@
 <header class="header">
-  <div class="container">    
+  <div class="container">
     <div class="banner_icons">
       <a routerLink="/"><img src="assets/casa.png" alt="Inicio" class="banner_icon"></a>
-      <a routerLink="/"><p class="banner_text">Inicio</p></a>
+      <a routerLink="/">
+        <p class="banner_text">Inicio</p>
+      </a>
     </div>
   </div>
   <div class="title">
@@ -14,7 +16,8 @@
   <h2>Supervisor Dashboard</h2>
   <button (click)="logout()">Cerrar sesión</button>
   <div>
-    <img *ngIf="currentUser?.image" [src]="currentUser.image" alt="Foto de {{currentUser.name}}" width="100" height="100" />
+    <img *ngIf="currentUser?.image" [src]="currentUser.image" alt="Foto de {{currentUser.name}}" width="100"
+      height="100" />
   </div>
   <div>
     <label for="email">Correo:</label>
@@ -38,6 +41,33 @@
       </div>
       <button type="submit" [disabled]="materialForm.invalid">Guardar Material</button>
     </form>
+  </div>
+  <div>
+    <h3>Materiales Disponibles</h3>
+    <div *ngIf="materiales.length === 0">
+      <p>No hay materiales registrados</p>
+    </div>
+
+    <table *ngIf="materiales.length > 0" class="material-table">
+      <thead>
+        <tr>
+          <th>Tipo de Material</th>
+          <th>Cantidad</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let material of materiales">
+          <td>{{ material.materialType }}</td>
+          <td>{{ material.quantity }}</td>
+          <td>
+            <button (click)="eliminarMaterial(material.materialType)">Eliminar</button>
+            <!-- Puedes agregar más acciones como editar -->
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
   </div>
   <div>
     <h3>Asignar tarea</h3>
@@ -64,7 +94,8 @@
     <h3>Información de ingresos de los trabajadores</h3>
     <ul>
       <li *ngFor="let worker of workers">
-        Nombre: {{ worker.name }}, Rol: {{ worker.role }}, Zona: {{ worker.zone }}, Email: {{ worker.email }}, Hora de Ingreso: {{ worker.createdAt }}
+        Nombre: {{ worker.name }}, Rol: {{ worker.role }}, Zona: {{ worker.zone }}, Email: {{ worker.email }}, Hora de
+        Ingreso: {{ worker.createdAt }}
       </li>
     </ul>
   </div>

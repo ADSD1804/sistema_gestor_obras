@@ -141,9 +141,16 @@ export class AuthService {
     return this.http.get<any[]>(`${this.backendUrl}/gestion_obras/ingreso_diario`);
   }
 
+  getMateriales(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.backendUrl}/gestion_obras/materiales`);
+  }
   // New method to add material
   addMaterial(materialData: { materialType: string; quantity: number }): Observable<any> {
     return this.http.post(`${this.backendUrl}/gestion_obras/materiales`, materialData);
+  }
+
+  deleteMaterial(materialType: string): Observable<any> {
+    return this.http.delete(`${this.backendUrl}/gestion_obras/materiales/${materialType}`);
   }
 
   getLoginTime(): Date | null {

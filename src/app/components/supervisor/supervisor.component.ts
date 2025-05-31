@@ -6,6 +6,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { User } from '../../interfaces/user';
 
+interface Material {
+  materialType: string;
+  quantity: number;
+}
+
 @Component({
   selector: 'app-supervisor',
   standalone: true,
@@ -21,8 +26,8 @@ export class SupervisorComponent implements OnInit {
   email: string = '';
   allTasks: any[] = [];
   workTime: any;
-
-  // New properties for material input
+  materiales: Material[] = []; 
+  displayedColumns: string[] = ['materialType', 'quantity', 'actions']; 
   materialType: string = '';
   quantity: number | null = null;
 
@@ -32,6 +37,7 @@ export class SupervisorComponent implements OnInit {
 
   ngOnInit() {
     this.loadIngresoDiarioWorkers();
+    this.cargarMateriales();
   }
 
   loadIngresoDiarioWorkers() {
@@ -137,6 +143,32 @@ export class SupervisorComponent implements OnInit {
       }
     });
   }
+cargarMateriales() {
+    this.authService.getMateriales().subscribe({
+      next: (data: Material[]) => {
+        this.materiales = data;
+      },
+      error: (err) => {
+        console.error('Error al cargar materiales', err);
+        alert('Error al cargar la lista de materiales');
+      }
+    });
+  }
+  eliminarMaterial(materialType: string) {
+    if (confirm('¿Está seguro de eliminar este material?')) {
+      this.authService.deleteMaterial(materialType).subscribe({
+        next: () => {
+          this.cargarMateriales();
+          alert('Material eliminado correctamente');
+        },
+        error: (err) => {
+          console.error('Error al eliminar', err);
+          alert('Error al eliminar el material');
+        }
+      });
+    }
+  }
+
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);

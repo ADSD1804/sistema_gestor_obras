@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
-
 const mongoUri = "mongodb+srv://andresdavidsoto:adsd1804@sistema-gestor-obras.ve3hami.mongodb.net/sistema_gestor_obras?retryWrites=true&w=majority";
 mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Conectado a MongoDB Atlas'))
@@ -22,7 +21,6 @@ app.use(cors({
 }));
 
 app.use(bodyParser.json());
-
 
 const ingresoDiarioSchema = new mongoose.Schema({
   name: String,
@@ -100,7 +98,6 @@ const tareasAsignadasSchema = new mongoose.Schema({
 
 const TareaAsignada = mongoose.model('TareaAsignada', tareasAsignadasSchema);
 
-// New Material schema and model
 const materialSchema = new mongoose.Schema({
   materialType: { type: String, required: true },
   quantity: { type: Number, required: true }
@@ -108,15 +105,44 @@ const materialSchema = new mongoose.Schema({
 
 const Material = mongoose.model('Material', materialSchema);
 
+app.get('/gestion_obras/materiales', async (req, res) => {
+  console.log('Accediendo a GET /gestion_obras/materiales'); 
+  try {
+    const materials = await Material.find().sort({ createdAt: -1 });
+    console.log(`Encontrados ${materials.length} materiales`); 
+    res.json(materials);
+  } catch (error) {
+    console.error('Error en GET materiales:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.post('/gestion_obras/materiales', async (req, res) => {
   try {
     const { materialType, quantity } = req.body;
     if (!materialType || !quantity) {
       return res.status(400).json({ error: 'materialType and quantity are required' });
     }
+    if (typeof quantity !== 'number' || quantity < 1) {
+      return res.status(400).json({ error: 'Quantity must be a number greater than 0' });
+    }
     const material = new Material({ materialType, quantity });
     await material.save();
     res.status(201).json(material);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete('/gestion_obras/materiales/:materialType', async (req, res) => {
+  try {
+    const deletedMaterial = await Material.findByIdAndDelete(req.params.materialType);
+    
+    if (!deletedMaterial) {
+      return res.status(404).json({ error: 'Material not found' });
+    }
+    
+    res.json({ message: 'Material deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -176,7 +202,6 @@ app.get('/gestion_obras/tareas_asignadas/:workerName', async (req, res) => {
 
 app.get('/gestion_obras/ingreso_diario', async (req, res) => {
   try {
-    // Exclude the "counters" field from the documents if it exists
     const ingresoDiarioData = await IngresoDiario.find({}, { counters: 0 }).lean();
     res.json(ingresoDiarioData);
   } catch (error) {
