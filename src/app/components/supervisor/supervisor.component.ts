@@ -11,6 +11,17 @@ interface Material {
   quantity: number;
 }
 
+interface SolicitudMaterial {
+  _id: string;
+  materialType: string;
+  quantity: number;
+  workerName: string;
+  workerRole: string;
+  email: string;
+  fechaSolicitud: Date;
+  estado: string;
+}
+
 @Component({
   selector: 'app-supervisor',
   standalone: true,
@@ -26,10 +37,13 @@ export class SupervisorComponent implements OnInit {
   email: string = '';
   allTasks: any[] = [];
   workTime: any;
-  materiales: Material[] = []; 
-  displayedColumns: string[] = ['materialType', 'quantity', 'actions']; 
+  materiales: Material[] = [];
+  displayedColumns: string[] = ['materialType', 'quantity', 'actions'];
   materialType: string = '';
   quantity: number | null = null;
+  solicitudes: SolicitudMaterial[] = [];
+  filteredSolicitudes: SolicitudMaterial[] = [];
+  filtroEstado: string = 'pendiente';
 
   constructor(private authService: AuthService, private router: Router) {
     this.currentUser = this.authService.getCurrentUser();
@@ -118,7 +132,7 @@ export class SupervisorComponent implements OnInit {
   }
 
   submitMaterial() {
-     if (!this.materialType || !this.quantity || this.quantity < 1) {
+    if (!this.materialType || !this.quantity || this.quantity < 1) {
       console.error('Datos del formulario inválidos');
       return;
     }
@@ -143,7 +157,7 @@ export class SupervisorComponent implements OnInit {
       }
     });
   }
-cargarMateriales() {
+  cargarMateriales() {
     this.authService.getMateriales().subscribe({
       next: (data: Material[]) => {
         this.materiales = data;
@@ -167,6 +181,61 @@ cargarMateriales() {
         }
       });
     }
+  }
+
+  cargarSolicitudes() {
+    this.authService.getSolicitudesMateriales().subscribe({
+      next: (data: SolicitudMaterial[]) => {
+        this.solicitudes = data;
+        this.filtrarSolicitudes();
+      },
+      error: (err) => {
+        console.error('Error al cargar solicitudes', err);
+        alert('Error al cargar las solicitudes de materiales');
+      }
+    });
+  }
+
+  filtrarSolicitudes() {
+    if (this.filtroEstado === 'todas') {
+      this.filteredSolicitudes = [...this.solicitudes];
+    } else {
+      this.filteredSolicitudes = this.solicitudes.filter(
+        s => s.estado === this.filtroEstado
+      );
+    }
+  }
+
+  aprobarSolicitud(id: string) {
+    this.authService.aprobarSolicitud(id).subscribe({
+      next: () => {
+        alert('Solicitud aprobada correctamente');
+        this.cargarSolicitudes();
+      },
+      error: (err) => {
+        console.error('Error al aprobar solicitud', err);
+        alert('Error al aprobar la solicitud');
+      }
+    });
+  }
+
+  rechazarSolicitud(id: string) {
+    if (confirm('¿Estás seguro de que deseas rechazar esta solicitud?')) {
+      this.authService.rechazarSolicitud(id).subscribe({
+        next: () => {
+          alert('Solicitud rechazada correctamente');
+          this.cargarSolicitudes();
+        },
+        error: (err) => {
+          console.error('Error al rechazar solicitud', err);
+          alert('Error al rechazar la solicitud');
+        }
+      });
+    }
+  }
+
+  onEstadoFilterChange() {
+    this.filtrarSolicitudes();
   }
 
   logout() {

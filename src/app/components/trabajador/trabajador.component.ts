@@ -20,11 +20,13 @@ interface Material {
 export class TrabajadorComponent implements OnInit {
   currentUser: any;
   workerName = '';
-  workerRole = 'trabajador';
+  workerRole: number = 0;
   assignedTasks: any[] = [];
   email: string = '';
   workTime: string = '';
   materiales: Material[] = [];
+  quantity: string = '';
+  materialType: string = '';
 
   constructor(private authService: AuthService, private router: Router) {
     this.currentUser = this.authService.getCurrentUser();
@@ -47,6 +49,38 @@ export class TrabajadorComponent implements OnInit {
       }
     });
   }
+
+solicitarMaterial() {
+  if (!this.currentUser) {
+    alert('No hay usuario logueado');
+    return;
+  }
+
+  const quantityNumber = Number(this.quantity);
+  if (isNaN(quantityNumber)) {
+    alert('La cantidad debe ser un número válido');
+    return;
+  }
+
+  this.authService.solicitarMaterial(
+    this.materialType,
+    quantityNumber,
+    this.currentUser.name,
+    this.currentUser.role,
+    this.currentUser.email
+  ).subscribe({
+    next: () => {
+      alert('Solicitud de material enviada correctamente');
+      // Limpiar el formulario
+      this.materialType = '';
+      this.quantity = '';
+    },
+    error: (err) => {
+      console.error('Error al solicitar material', err);
+      alert('Error al enviar la solicitud de material');
+    }
+  });
+}
 
   loadAssignedTasks() {
     if (this.currentUser && this.currentUser.name) {

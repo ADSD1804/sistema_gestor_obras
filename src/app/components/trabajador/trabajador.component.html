@@ -1,10 +1,12 @@
 <header class="header">
-  <div class="container">    
+  <div class="container">
     <div class="banner_icons">
       <a routerLink="/"><img src="assets/casa.png" alt="Inicio" class="banner_icon"></a>
-      <a routerLink="/"><p class="banner_text">Inicio</p></a>
+      <a routerLink="/">
+        <p class="banner_text">Inicio</p>
+      </a>
+    </div>
   </div>
-</div>
   <div class="title">
     <h4>Sistema Gestor de Obras</h4>
   </div>
@@ -37,29 +39,41 @@
   </div>
   <div>
     <h3>Materiales Disponibles</h3>
-  <div *ngIf="materiales.length === 0">
-    <p>No hay materiales registrados</p>
-  </div>
-  
-  <table *ngIf="materiales.length > 0" class="material-table">
-    <thead>
-      <tr>
-        <th>Tipo de Material</th>
-        <th>Cantidad</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let material of materiales">
-        <td>{{ material.materialType }}</td>
-        <td>{{ material.quantity }}</td>
-      </tr>
-    </tbody>
-  </table>
+    <div *ngIf="materiales.length === 0">
+      <p>No hay materiales registrados</p>
+    </div>
+
+    <table *ngIf="materiales.length > 0" class="material-table">
+      <thead>
+        <tr>
+          <th>Tipo de Material</th>
+          <th>Cantidad</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let material of materiales">
+          <td>{{ material.materialType }}</td>
+          <td>{{ material.quantity }}</td>
+        </tr>
+      </tbody>
+    </table>
 
   </div>
   <div>
     <h3>Solicitar Materiales</h3>
-
+    <div>
+      <form #materialForm="ngForm" (ngSubmit)="solicitarMaterial()">
+        <div>
+          <label for="materialType">Tipo de Material:</label>
+          <input id="materialType" name="materialType" [(ngModel)]="materialType" required />
+        </div>
+        <div>
+          <label for="quantity">Cantidad:</label>
+          <input id="quantity" name="quantity" type="number" [(ngModel)]="quantity" required min="1" />
+        </div>
+        <button type="submit" [disabled]="materialForm.invalid">Solicitar Material</button>
+      </form>
+    </div>
   </div>
 </div>

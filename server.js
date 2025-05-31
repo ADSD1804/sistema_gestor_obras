@@ -215,3 +215,83 @@ initializeLogsFile().then(() => {
     console.log(`Registros guardados en: ${LOGS_FILE}`);
   });
 });
+
+
+const solicitudMaterialSchema = new mongoose.Schema({
+  materialType: String,
+  quantity: Number,
+  workerName: String,
+  workerRole: String,
+  email: String,
+  fechaSolicitud: { type: Date, default: Date.now },
+  estado: { type: String, default: 'pendiente' }
+}, { collection: 'solicitudes_materiales' });
+
+const SolicitudMaterial = mongoose.model('SolicitudMaterial', solicitudMaterialSchema);
+
+app.post('/gestion_obras/solicitudes_trabjadores', async (req, res) => {
+  try {
+    const { materialType, quantity, workerName, workerRole, email } = req.body;
+    
+    if (!materialType || !quantity || !workerName || !workerRole || !email) {
+      return res.status(400).json({ error: 'Todos los campos son requeridos' });
+    }
+
+    const solicitud = new SolicitudMaterial({
+      materialType,
+      quantity,
+      workerName,
+      workerRole,
+      email,
+      estado: 'pendiente'
+    });
+
+    await solicitud.save();
+    res.status(201).json(solicitud);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/gestion_obras/solicitudes_materiales', async (req, res) => {
+  try {
+    const solicitudes = await SolicitudMaterial.find().sort({ fechaSolicitud: -1 });
+    res.json(solicitudes);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Aprobar solicitud
+app.patch('/gestion_obras/solicitudes_materiales/:id/aprobar', async (req, res) => {
+  try {
+    const updatedSolicitud = await SolicitudMaterial.findByIdAndUpdate(
+      req.params.id,
+      { estado: 'aprobado' },
+      { new: true }
+    );
+    
+    if (!updatedSolicitud) {
+      return res.status(404).json({ error: 'Solicitud no encontrada' });
+    }
+    
+    res.json(updatedSolicitud);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Rechazar solicitud (eliminar)
+app.delete('/gestion_obras/solicitudes_materiales/:id', async (req, res) => {
+  try {
+    const deletedSolicitud = await SolicitudMaterial.findByIdAndDelete(req.params.id);
+    
+    if (!deletedSolicitud) {
+      return res.status(404).json({ error: 'Solicitud no encontrada' });
+    }
+    
+    res.json({ message: 'Solicitud rechazada y eliminada' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});

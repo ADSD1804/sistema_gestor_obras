@@ -67,8 +67,65 @@
         </tr>
       </tbody>
     </table>
-
   </div>
+
+  <div>
+    <h3>Materiales Solicitados</h3>
+
+    <div class="filtros">
+      <label for="filtroEstado">Filtrar por estado:</label>
+      <select id="filtroEstado" [(ngModel)]="filtroEstado" (change)="onEstadoFilterChange()">
+        <option value="pendiente">Pendientes</option>
+        <option value="aprobado">Aprobadas</option>
+        <option value="rechazado">Rechazadas</option>
+        <option value="todas">Todas</option>
+      </select>
+    </div>
+
+    <table *ngIf="filteredSolicitudes.length > 0" class="material-table">
+      <thead>
+        <tr>
+          <th>Tipo de Material</th>
+          <th>Cantidad</th>
+          <th>Solicitado por</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let solicitud of filteredSolicitudes">
+          <td>{{ solicitud.materialType }}</td>
+          <td>{{ solicitud.quantity }}</td>
+          <td>{{ solicitud.workerName }} ({{ solicitud.workerRole }})</td>
+          <td>{{ solicitud.fechaSolicitud | date:'short' }}</td>
+          <td [ngClass]="{
+              'estado-pendiente': solicitud.estado === 'pendiente',
+              'estado-aprobado': solicitud.estado === 'aprobado',
+              'estado-rechazado': solicitud.estado === 'rechazado'
+            }">
+            {{ solicitud.estado }}
+          </td>
+          <td>
+            <button *ngIf="solicitud.estado === 'pendiente'" (click)="aprobarSolicitud(solicitud._id)"
+              class="btn-aprobar">
+              Aprobar
+            </button>
+            <button *ngIf="solicitud.estado === 'pendiente'" (click)="rechazarSolicitud(solicitud._id)"
+              class="btn-rechazar">
+              Rechazar
+            </button>
+            <span *ngIf="solicitud.estado !== 'pendiente'">-</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="filteredSolicitudes.length === 0" class="no-results">
+      No hay solicitudes {{ filtroEstado === 'todas' ? '' : filtroEstado + 's' }} para mostrar.
+    </div>
+  </div>
+
   <div>
     <h3>Asignar tarea</h3>
     <label for="workerSelect">Seleccionar trabajador:</label>

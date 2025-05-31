@@ -10,7 +10,7 @@ export class AuthService {
   private apiUrl = 'https://rickandmortyapi.com/api/character';
   private backendUrl = 'http://localhost:3001';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   login(name: string): Observable<User | null> {
     const now = new Date();
@@ -19,7 +19,7 @@ export class AuthService {
       switchMap(response => {
         if (response.results?.length > 0) {
           const character = response.results[0];
-          
+
           let role: 'arquitecto' | 'supervisor' | 'trabajador';
           if (character.id % 3 === 0) role = 'arquitecto';
           else if (character.id % 3 === 1) role = 'supervisor';
@@ -33,7 +33,7 @@ export class AuthService {
             image: character.image,
             zone: character.origin?.name || 'Desconocida'
           };
-          
+
           localStorage.setItem('currentUser', JSON.stringify(user));
           return this.registerWorker({
             name: user.name,
@@ -90,7 +90,7 @@ export class AuthService {
     return this.http.post(`${this.backendUrl}/gestion_obras/registro_diario`, workerData);
   }
 
-  logout(){
+  logout() {
     if (typeof window !== 'undefined' && window.localStorage) {
       const currentUser = this.getCurrentUser();
       const loginTime = this.getLoginTime();
@@ -98,7 +98,7 @@ export class AuthService {
       if (currentUser && loginTime) {
         const workedTimeMs = logoutTime.getTime() - loginTime.getTime();
         const workedTimeMinutes = Math.floor(workedTimeMs / 60000);
-        // Create tiempo_trabajado record in backend
+
         this.recordWorkedTime({
           userId: currentUser.id,
           loginTime: loginTime.toISOString(),
@@ -106,19 +106,19 @@ export class AuthService {
           workedMinutes: workedTimeMinutes
         }).subscribe({
           next: () => {
-            // After recording, clear localStorage
+
             localStorage.removeItem('currentUser');
             localStorage.setItem('logoutTime', logoutTime.toISOString());
           },
           error: (err) => {
             console.error('Error recording worked time:', err);
-            // Still clear localStorage even if error
+
             localStorage.removeItem('currentUser');
             localStorage.setItem('logoutTime', logoutTime.toISOString());
           }
         });
       } else {
-        // If no user or loginTime, just clear localStorage
+
         localStorage.removeItem('currentUser');
         localStorage.setItem('logoutTime', logoutTime.toISOString());
       }
@@ -129,7 +129,7 @@ export class AuthService {
     return this.http.post(`${this.backendUrl}/tiempo_trabajado`, data);
   }
 
-  getCurrentUser(){
+  getCurrentUser() {
     if (typeof window !== 'undefined' && window.localStorage) {
       const user = localStorage.getItem('currentUser');
       return user ? JSON.parse(user) : null;
@@ -144,13 +144,16 @@ export class AuthService {
   getMateriales(): Observable<any[]> {
     return this.http.get<any[]>(`${this.backendUrl}/gestion_obras/materiales`);
   }
-  // New method to add material
+
   addMaterial(materialData: { materialType: string; quantity: number }): Observable<any> {
     return this.http.post(`${this.backendUrl}/gestion_obras/materiales`, materialData);
   }
 
   deleteMaterial(materialType: string): Observable<any> {
     return this.http.delete(`${this.backendUrl}/gestion_obras/materiales/${materialType}`);
+  }
+  solicitarMaterial(materialType: string, quantity: number, workerName: string, workerRole: string, email: string): Observable<any> {
+    return this.http.post(`${this.backendUrl}/gestion_obras/solicitudes_trabjadores`, { materialType, quantity, workerName, workerRole, email });
   }
 
   getLoginTime(): Date | null {
@@ -162,4 +165,16 @@ export class AuthService {
     const logoutTime = localStorage.getItem('logoutTime');
     return logoutTime ? new Date(logoutTime) : null;
   }
+
+getSolicitudesMateriales(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.backendUrl}/gestion_obras/solicitudes_materiales`);
+}
+
+aprobarSolicitud(id: string): Observable<any> {
+  return this.http.patch(`${this.backendUrl}/gestion_obras/solicitudes_materiales/${id}/aprobar`, {});
+}
+
+rechazarSolicitud(id: string): Observable<any> {
+  return this.http.delete(`${this.backendUrl}/gestion_obras/solicitudes_materiales/${id}`);
+}
 }
