@@ -166,15 +166,26 @@ export class AuthService {
     return logoutTime ? new Date(logoutTime) : null;
   }
 
-getSolicitudesMateriales(): Observable<any[]> {
-  return this.http.get<any[]>(`${this.backendUrl}/gestion_obras/solicitudes_materiales`);
-}
+  getSolicitudesMateriales(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.backendUrl}/gestion_obras/solicitudes_materiales`);
+  }
 
-aprobarSolicitud(id: string): Observable<any> {
-  return this.http.patch(`${this.backendUrl}/gestion_obras/solicitudes_materiales/${id}/aprobar`, {});
-}
+  aprobarSolicitud(id: string): Observable<any> {
+    return this.http.patch(`${this.backendUrl}/gestion_obras/solicitudes_materiales/${id}/aprobar`, {});
+  }
 
-rechazarSolicitud(id: string): Observable<any> {
-  return this.http.delete(`${this.backendUrl}/gestion_obras/solicitudes_materiales/${id}`);
-}
+  rechazarSolicitud(id: string): Observable<any> {
+    return this.http.delete(`${this.backendUrl}/gestion_obras/solicitudes_materiales/${id}`);
+  }
+
+  private zonasUrl = `${this.backendUrl}/gestion_obras/zonas`;
+
+  getZonas(): Observable<string[]> {
+    return this.http.get<string[]>(this.zonasUrl);
+  }
+
+  createZona(zona: string): Observable<any> {
+    return this.http.post(this.zonasUrl, { nombre: zona });
+  }
+
 }

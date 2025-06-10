@@ -87,15 +87,6 @@ app.get('/api/logs', async (req, res) => {
   }
 });
 
-const tareasAsignadasSchema = new mongoose.Schema({
-  workerName: String,
-  email: String,
-  task: String,
-  assignedBy: String,
-  assignedAt: { type: Date, default: Date.now },
-  estado: { type: String, default: 'en curso' }
-}, { collection: 'tareas_asignadas' });
-
 const TareaAsignada = mongoose.model('TareaAsignada', tareasAsignadasSchema);
 
 const materialSchema = new mongoose.Schema({
@@ -106,10 +97,10 @@ const materialSchema = new mongoose.Schema({
 const Material = mongoose.model('Material', materialSchema);
 
 app.get('/gestion_obras/materiales', async (req, res) => {
-  console.log('Accediendo a GET /gestion_obras/materiales'); 
+  console.log('Accediendo a GET /gestion_obras/materiales');
   try {
     const materials = await Material.find().sort({ createdAt: -1 });
-    console.log(`Encontrados ${materials.length} materiales`); 
+    console.log(`Encontrados ${materials.length} materiales`);
     res.json(materials);
   } catch (error) {
     console.error('Error en GET materiales:', error);
@@ -137,11 +128,11 @@ app.post('/gestion_obras/materiales', async (req, res) => {
 app.delete('/gestion_obras/materiales/:materialType', async (req, res) => {
   try {
     const deletedMaterial = await Material.findByIdAndDelete(req.params.materialType);
-    
+
     if (!deletedMaterial) {
       return res.status(404).json({ error: 'Material not found' });
     }
-    
+
     res.json({ message: 'Material deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -232,7 +223,7 @@ const SolicitudMaterial = mongoose.model('SolicitudMaterial', solicitudMaterialS
 app.post('/gestion_obras/solicitudes_trabjadores', async (req, res) => {
   try {
     const { materialType, quantity, workerName, workerRole, email } = req.body;
-    
+
     if (!materialType || !quantity || !workerName || !workerRole || !email) {
       return res.status(400).json({ error: 'Todos los campos son requeridos' });
     }
@@ -270,11 +261,11 @@ app.patch('/gestion_obras/solicitudes_materiales/:id/aprobar', async (req, res) 
       { estado: 'aprobado' },
       { new: true }
     );
-    
+
     if (!updatedSolicitud) {
       return res.status(404).json({ error: 'Solicitud no encontrada' });
     }
-    
+
     res.json(updatedSolicitud);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -285,12 +276,58 @@ app.patch('/gestion_obras/solicitudes_materiales/:id/aprobar', async (req, res) 
 app.delete('/gestion_obras/solicitudes_materiales/:id', async (req, res) => {
   try {
     const deletedSolicitud = await SolicitudMaterial.findByIdAndDelete(req.params.id);
-    
+
     if (!deletedSolicitud) {
       return res.status(404).json({ error: 'Solicitud no encontrada' });
     }
-    
+
     res.json({ message: 'Solicitud rechazada y eliminada' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+const zonaSchema = new mongoose.Schema({
+  nombre: { type: String, required: true, unique: true },
+  createdAt: { type: Date, default: Date.now }
+}, { collection: 'zonas' });
+
+const Zona = mongoose.model('Zona', zonaSchema);
+
+const tareasAsignadasSchema = new mongoose.Schema({
+  workerName: String,
+  email: String,
+  task: String,
+  assignedBy: String,
+  assignedAt: { type: Date, default: Date.now },
+  estado: { type: String, default: 'en curso' },
+  zone: String 
+}, { collection: 'tareas_asignadas' });
+
+app.get('/gestion_obras/zonas', async (req, res) => {
+  try {
+    const zonas = await Zona.find().sort({ nombre: 1 });
+    res.json(zonas.map(z => z.nombre));
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/gestion_obras/zonas', async (req, res) => {
+  try {
+    const { nombre } = req.body;
+    if (!nombre) {
+      return res.status(400).json({ error: 'El nombre de la zona es requerido' });
+    }
+
+    const zonaExistente = await Zona.findOne({ nombre });
+    if (zonaExistente) {
+      return res.status(400).json({ error: 'La zona ya existe' });
+    }
+
+    const zona = new Zona({ nombre });
+    await zona.save();
+    res.status(201).json(zona);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

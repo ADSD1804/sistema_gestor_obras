@@ -44,6 +44,9 @@ export class SupervisorComponent implements OnInit {
   solicitudes: SolicitudMaterial[] = [];
   filteredSolicitudes: SolicitudMaterial[] = [];
   filtroEstado: string = 'pendiente';
+  zones: string[] = [];
+  zone: string = '';
+  selectedZone: string | null = null;
 
   constructor(private authService: AuthService, private router: Router) {
     this.currentUser = this.authService.getCurrentUser();
@@ -52,6 +55,67 @@ export class SupervisorComponent implements OnInit {
   ngOnInit() {
     this.loadIngresoDiarioWorkers();
     this.cargarMateriales();
+    this.loadZones();
+  }
+
+  loadZones() {
+    this.authService.getZonas().subscribe({
+      next: (zonas) => {
+        this.zones = zonas;
+      },
+      error: (err) => {
+        console.error('Error cargando zonas:', err);
+        alert('Error al cargar las zonas de trabajo');
+      }
+    });
+  }
+
+  createZone() {
+    if (!this.zone.trim()) {
+      alert('Por favor ingrese un nombre para la zona');
+      return;
+    }
+
+    this.authService.createZona(this.zone.trim()).subscribe({
+      next: () => {
+        alert('Zona creada correctamente');
+        this.zone = '';
+        this.loadZones(); // Recargar la lista de zonas
+      },
+      error: (err) => {
+        console.error('Error creando zona:', err);
+        alert('Error al crear la zona');
+      }
+    });
+  }
+
+  assignTask() {
+    if (!this.selectedWorker || !this.task.trim() || !this.selectedZone) {
+      alert('Por favor, complete todos los campos: trabajador, tarea y zona.');
+      return;
+    }
+
+    const taskData = {
+      workerName: this.selectedWorker.name,
+      email: this.email,
+      task: this.task.trim(),
+      assignedBy: this.currentUser?.name || 'Desconocido',
+      zone: this.selectedZone 
+    };
+
+    this.authService.assignTask(taskData).subscribe({
+      next: () => {
+        alert('Tarea asignada correctamente.');
+        this.task = '';
+        this.selectedWorker = null;
+        this.selectedZone = null;
+        this.email = '';
+        this.loadTasks();
+      },
+      error: (err) => {
+        alert('Error al asignar la tarea: ' + err.message);
+      }
+    });
   }
 
   loadIngresoDiarioWorkers() {
@@ -103,32 +167,6 @@ export class SupervisorComponent implements OnInit {
     } else {
       this.email = '';
     }
-  }
-
-  assignTask() {
-    if (!this.selectedWorker || !this.task.trim()) {
-      alert('Por favor, seleccione un trabajador y escriba una tarea.');
-      return;
-    }
-
-    const taskData = {
-      workerName: this.selectedWorker.name,
-      email: this.email,
-      task: this.task.trim(),
-      assignedBy: this.currentUser?.name || 'Desconocido'
-    };
-
-    this.authService.assignTask(taskData).subscribe({
-      next: () => {
-        alert('Tarea asignada correctamente.');
-        this.task = '';
-        this.selectedWorker = null;
-        this.email = '';
-      },
-      error: (err) => {
-        alert('Error al asignar la tarea: ' + err.message);
-      }
-    });
   }
 
   submitMaterial() {

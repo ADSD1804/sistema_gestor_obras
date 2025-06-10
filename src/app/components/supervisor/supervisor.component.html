@@ -26,7 +26,6 @@
   <div>
     Tiempo trabajado: {{ workTime }}
   </div>
-  <!-- Existing content -->
 
   <div>
     <h3>Ingreso de Materiales</h3>
@@ -126,26 +125,60 @@
     </div>
   </div>
 
-  <div>
-    <h3>Asignar tarea</h3>
+ <div>
+  <h3>Asignar tarea</h3>
+  <div class="form-group">
     <label for="workerSelect">Seleccionar trabajador:</label>
-    <select id="workerSelect" [(ngModel)]="selectedWorker" (change)="onWorkerChange()">
+    <select id="workerSelect" [(ngModel)]="selectedWorker" (change)="onWorkerChange()" class="form-control">
       <option [ngValue]="null">--Seleccione--</option>
       <option *ngFor="let worker of workers" [ngValue]="worker">{{ worker.name }}</option>
     </select>
   </div>
-  <div>
-    <input [(ngModel)]="task" placeholder="Nueva tarea" />
-    <button (click)="assignTask()">Asignar tarea</button>
+
+  <div class="form-group">
+    <label for="zoneSelect">Seleccionar zona de trabajo:</label>
+    <select id="zoneSelect" [(ngModel)]="selectedZone" class="form-control">
+      <option [ngValue]="null">--Seleccione--</option>
+      <option *ngFor="let zone of zones" [ngValue]="zone">{{ zone }}</option>
+    </select>
   </div>
-  <div>
-    <h3>Tareas asignadas</h3>
-    <ul>
-      <li *ngFor="let task of allTasks">
-        {{ task.workerName }} - {{ task.task }} - {{ task.estado }}
-      </li>
-    </ul>
+
+  <div class="form-group">
+    <input [(ngModel)]="task" placeholder="Nueva tarea" class="form-control" />
   </div>
+
+  <button (click)="assignTask()" class="btn btn-primary">Asignar tarea</button>
+</div>
+
+<div>
+  <h3>Tareas asignadas</h3>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Trabajador</th>
+        <th>Tarea</th>
+        <th>Zona</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let task of allTasks">
+        <td>{{ task.workerName }}</td>
+        <td>{{ task.task }}</td>
+        <td>{{ task.zone || 'Sin zona' }}</td>
+        <td>{{ task.estado }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div>
+  <h3>Crear zona de trabajo</h3>
+  <div class="form-group">
+    <input [(ngModel)]="zone" placeholder="Nueva zona" class="form-control" />
+  </div>
+  <button (click)="createZone()" class="btn btn-success">Crear zona</button>
+</div>
 
   <div>
     <h3>Información de ingresos de los trabajadores</h3>
